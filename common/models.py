@@ -1,15 +1,19 @@
-
-
 # from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 
 from django.db import models
 # from django.utils import timezone
+MALE = "male"
+FEMALE = "female"
+
+GENDER_CHOICE = (
+    (MALE, "male"),
+    (FEMALE, "female")
+)
 
 
 class User(AbstractUser):
     INVALID_CODE = "######"
-
     full_name = models.CharField(("full name"), max_length=256)
     email = models.EmailField(
         ("email"),
@@ -19,6 +23,32 @@ class User(AbstractUser):
         },
         null=True
     )
+
+    bio = models.CharField(max_length=256, null=True, blank=True)
+    awatar = models.ImageField(upload_to='awatar/', null=True, blank=True)
+    bg_image = models.ImageField(upload_to='bg_image/', null=True, blank=True)
+    birth_day = models.DateField(null=True, blank=True)
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICE)
+
+    phone = models.CharField(max_length=32, null=True, blank=True)
+    website = models.CharField(max_length=256, null=True, blank=True)
+    location = models.CharField(max_length=512, null=True, blank=True)
+
+    facebook = models.CharField(max_length=256, null=True, blank=True)
+    instagram = models.CharField(max_length=256, null=True, blank=True)
+    twitter = models.CharField(max_length=256, null=True, blank=True)
+    linkedln = models.CharField(max_length=256, null=True, blank=True)
+
+    flowwing = models.ManyToManyField(self, null=True, blank=True, related_name="user_following")
+    followers = models.ManyToManyField(self, null=True, blank=True, related_name="user_follower")
+    blocked_users = models.ManyToManyField(self, null=True, blank=True, related_name="blocked_users")
+
+    flowwing_count = models.PositiveIntegerField(null=True, blank=True)
+    followers_count = models.PositiveIntegerField(null=True, blank=True)
+    blocked_users_count = models.PositiveIntegerField(null=True, blank=True)
+
+    is_online = models.BooleanField(default=False) # view or @property in models
+
     created_at = models.DateTimeField(("date created"), auto_now_add=True, null=True)
     updated_at = models.DateTimeField(("date updated"), auto_now=True)
 
